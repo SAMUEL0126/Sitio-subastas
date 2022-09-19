@@ -1,0 +1,125 @@
+{% extends "auctions/layout.html"  %}
+{% load static %}
+
+{% block body %}
+
+<div class="container-fluid ">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-10 ">
+            <div class="card" >
+                <img class="card-img-top" height="600px" src="{{item.img_url}}" alt="Card image cap">
+                <div class="card-body">
+                  <h5 class="card-title">{{item.title}}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{owner.username}}</h6>
+                 <div style="height:60px; overflow: auto;">
+                    <p class="card-text">{{item.description}}.</p>
+                 </div>
+                 <div>
+                   <form method="POST" action="{% url 'auctions:place_bid' %}">
+                     {% csrf_token %}
+                     {% if item.status %}
+                      <input name="new_bid" placeholder="Bid">
+                      <input hidden name="listing_title" value="{{item.title}}" placeholder="">
+                      <button href="#" id="myBtn" class="btn btn-primary">Place Bid</button>
+                     {% endif %}
+
+                   </form>
+                 </div>
+                  
+                  <div style="flex-direction: row; " class="flexbox-container">
+                    <label style="font-size: 20px; font-weight: bold; padding-right: 10px;">Bid</label>
+                    {% if last_bid %}
+                    <label style="font-size: 35px; ">${{last_bid}}</label>  
+                    {% else %}
+                    <label style="font-size: 35px; ">${{item.starting_bid}}</label>
+                    {% endif %}
+                  </div>
+                  <div  style="flex-flow: row wrap; " class="flexbox-container">
+                    <div class="row">
+                      <label style="padding-left: 15px; font-size: 20px; font-weight: bold; ">Status</label>
+                      {% if item.status %}
+                      <div style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid; background-color:green; opacity: 0.4; margin-top: 5px; margin-left: 10px;"></div>
+                      {% else %}
+                      <div style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid; background-color:red; opacity: 0.4;"></div>
+                      {% endif %}
+                    </div>
+                    {% if privilege %}
+                    <form action="{% url 'auctions:end_listing' %}" method="POST">
+                      {%csrf_token%}
+                      <input hidden name="listing_title" value="{{item.title}}">
+                     <button  type="submit" class="btn btn-warning">Time up</button>
+                    </form>
+                    {% endif %}
+                    
+                    <!-- {% if item.status %} -->
+                    
+                     <!-- {% endif %} -->
+                  </div>
+                  {% if message_bid %}
+                    <p style="font-weight: bold; color: green;">{{message_bid}}</p>
+                    {%else%}
+                  {%endif%}
+                </div>
+
+                
+                <div class="modal-body">
+                  <h5>Comments</h5>
+
+                  {% for comment in comments %}
+                    
+                    <div class="media-list">
+                      <li class="media">
+                          <a class="pull-left" href="#">
+                             <img class="media-object rounded-circle" height="150px" src="{% static 'auctions/media/alejo_cat.jpeg'%}" alt="profile">
+                          </a>
+                          <div style="background-color: #E2E2E2; " class="media-body">
+                              <div style="padding: 20px; " class="well well-lg">
+                                  <h4 class="media-heading text-uppercase reviews">{{comment.author.username}}</h4>
+                                  <ul class="media-date text-uppercase reviews ">
+                                     <li>22</li>
+                                     <li>09</li>
+                                     <li>2014</li>
+                                  </ul>
+                                  <p class="media-comment">
+                                     {{comment.text}}
+                                  </p>
+                              </div>
+                          </div>
+                      </li> 
+                    </div>
+                    {% empty %}
+                      <h6>No comment has been added yet :C</h6>
+                {% endfor %}
+                </div> 
+
+                 <form method="POST" action="{% url 'auctions:add_comment' %}">
+                   {% csrf_token%}
+                  <div class="form-group" style="padding-top: 5px;">
+                    <label for="commentText">New comment</label>
+                    <input hidden type="text" value="{{item.title}}" name="listing_title">
+                    <input hidden type="text" value="{{owner.username}}" name="owner">
+                    <textarea class="form-control" name="commentText" id="commentText" rows="3"></textarea>
+                    <div style="text-align: right ;" >
+                      <button class="btn btn-secondary">Add Comment</button>
+                   </div>
+                  </div> 
+                 </form>                                                
+                </div>
+            </div>        
+        </div>
+    </div>
+  </div> 
+
+  <!-- <div class="container-fluid">
+    <div class="row justify-content-md-center">
+      <div class="col-lg-10">
+        <div class="card">
+          <p>
+            Hi
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+{% endblock %}

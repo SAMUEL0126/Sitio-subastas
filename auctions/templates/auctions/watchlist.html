@@ -1,0 +1,49 @@
+{% extends 'auctions/layout.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row header justify-content-md-center">
+        <div class="col-lg" >
+            <h4>Item Name</h4>
+        </div>
+        <div class="col-lg">
+            <h4 class="">Starting Bid</h4>
+        </div>
+        <div class="col-lg">
+            <h4>Description</h4>
+        </div>
+        <div class="col-lg">
+            <h4>Action</h4>
+        </div>
+        
+    </div>
+
+    {% for item in watchlist %}
+    <hr>
+    <div class="row">
+        <div class="col-lg" >
+            <a href="{% url 'auctions:listing_details'%}?listing_title={{item.items.title}}">{{item.items.title}}</a>
+        </div>
+        <div class="col-lg">
+            <p>{{item.items.starting_bid}}</p>
+        </div>
+        <div class="col-lg">
+            <p>{{item.items.description}}</p>
+        </div>
+        <div class="col-lg">
+            <form action="{% url 'auctions:delete_item_watchlist' %}" method="POST">
+                {% csrf_token %}
+                <input hidden name="listing_title" value="{{item.items.title}}"></input>
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </form>
+            
+        </div>
+    </div>
+    {%empty%}
+        <h5>Watchlist empty</h5>
+    {% endfor %}
+
+</div>
+
+{% endblock  %}

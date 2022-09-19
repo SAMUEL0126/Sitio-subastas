@@ -1,0 +1,52 @@
+{% extends 'auctions/layout.html' %}
+{% load static %}
+
+{% block body %}
+<h1>Active listings for {{category}}</h1>
+
+{% if items %}
+<div class="container">
+    <div class="row">
+{% for item in items_bids %}
+
+        <div class="col-lg-4">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top"   src="{{item.0.img_url}}" alt="Card image cap">
+                <div class="card-body">
+                  <h5 class="card-title">
+                      <span style="display: block; overflow: hidden; white-space: nowrap; height: 23px; text-overflow: ellipsis;">
+                        {{item.0.title}}
+                      </span>
+                      </h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{ item.0.user.username }}</h6>
+                    <p class="card-text">
+                        <span id="item-title" style="display: block; overflow: hidden; white-space: nowrap; height: 23px; text-overflow: ellipsis;">
+                           {{item.0.description}}
+                        </span>
+                    </p>
+                  
+                  <div style="flex-direction: row; " class="flexbox-container">
+                    <label style="font-size: 20px; font-weight: bold; padding-right: 10px;">Bid</label>
+                    <label style="font-size: 35px; ">${{item.1}}</label>
+                  </div>
+                  <div style="text-align: center;">
+                    <!-- <button onclick="showAlert('{{item.title}}');"  href="#" id="myBtn" class="btn btn-primary" data-toggle="modal">Open</button> -->
+                    <form method="POST" action=" {% url 'auctions:listing_details' %} ">
+                        {% csrf_token %}
+                        <input hidden type="text" value="{{item.0.title}}" name="listing_title">
+                        <button   href="#" id="myBtn" class="btn btn-primary" type="submit">Open</button>
+                      </form>
+                  </div>
+                  
+                </div>
+            </div>
+        </div>
+{% endfor %}
+</div>
+</div> 
+{% else %}
+  <h4>There's no listing at the moment</h4>
+{% endif %}
+
+
+{% endblock  %}

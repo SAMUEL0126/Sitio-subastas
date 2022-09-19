@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<form action="{% url 'auctions:add' %}" method="POST">  
+    {% csrf_token %}
+    <div class="form-group">
+     
+        <!--
+            <input type="text" class="form-control" id="titleInput" placeholder="New entry title " >
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" placeholder="New entry content">
+            </textarea>
+             
+        -->
+        {{ new_form }}
+        <button style="margin-top: 10px;" type="submit" class="btn btn-primary">Submit</button>
+    </div>            
+   
+</form>
+{% endblock %}

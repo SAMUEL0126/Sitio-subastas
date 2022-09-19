@@ -1,0 +1,215 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+
+
+    <h2>Active Listings</h2>
+    {%if message %}
+                          <p>{{message}}</p>
+                          {%endif%}
+                          
+    {% if items %}
+        <div class="container">
+            <div class="row">
+        {% for item in items_bids %}
+              {% if item.0.status %}
+                <div class="col-lg-4">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top"   src="{{item.0.img_url}}" alt="Card image cap">
+                        <div class="card-body">
+                          <h5 class="card-title">
+                              <span style="display: block; overflow: hidden; white-space: nowrap; height: 23px; text-overflow: ellipsis;">
+                                {{item.0.title}}
+                              </span>
+                              </h5>
+                          <h6 class="card-subtitle mb-2 text-muted">{{ item.0.user.username }}</h6>
+                            <p class="card-text">
+                                <span id="item-title" style="display: block; overflow: hidden; white-space: nowrap; height: 23px; text-overflow: ellipsis;">
+                                   {{item.0.description}}
+                                </span>
+                            </p>
+                          
+                          <div style="flex-direction: row; " class="flexbox-container">
+                            <label style="font-size: 20px; font-weight: bold; padding-right: 10px;">Bid</label>
+                            {% if item.1 %}
+                            <label style="font-size: 35px; ">${{item.1}}</label>
+                            {% else %}
+                            <label style="font-size: 35px; ">${{item.0.starting_bid}}</label>
+                            {% endif %}
+                            
+                          </div>
+                          <div style="text-align: center;">
+                            <!-- <button onclick="showAlert('{{item.title}}');"  href="#" id="myBtn" class="btn btn-primary" data-toggle="modal">Open</button> -->
+                            <form method="POST" action=" {% url 'auctions:listing_details' %} ">
+                              {% csrf_token %}
+                              <input hidden type="text" value="{{item.0.title}}" name="listing_title">
+                              <button   href="#" id="myBtn" class="btn btn-primary" type="submit">Open</button>
+                            </form>
+                            <form method="POST" action=" {% url 'auctions:index' %} ">
+                              {% csrf_token %}
+                              <input hidden type="text" value="{{item.0.title}}" name="listing_title">
+                              <button   href="#" id="myBtn1" class="btn btn-secondary" type="submit">Add to Watchlist</button>
+                            </form>
+                          </div>
+                          
+                          
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+        {% endfor %}
+        </div>
+    </div> 
+    {% else %}
+          <h4>There's no listing at the moment</h4>
+    {% endif %}
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+      
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div style="width: 100%; box-sizing: border-box;">
+                    <div class="box">
+                        <img id="img_item_modal" height="220px"  src="" alt="Card image cap">
+                    </div>
+
+                    <h4 id="modal_title" class="modal-title">{{item.0.title}}</h4>
+                    <div style="display: inline-block; position: relative;">
+                       <label >Owner: </label> 
+                       <label id="username_label">{{user.username}}</label>
+                    </div>
+                    <div style="">
+                        <label >Current Bid: $</label> 
+                        <label id="modal_bid"></label>
+                    </div>
+                </div>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+              <h5>Comments</h5>
+             <div class="media-list">
+                 <li class="media">
+                     <a class="pull-left" href="#">
+                        <img class="media-object rounded-circle" height="150px" src="{% static 'auctions/media/alejo_cat.jpeg'%}" alt="profile">
+                     </a>
+                     <div style="background-color: #E2E2E2; " class="media-body">
+                         <div style="padding: 20px; " class="well well-lg">
+                             <h4 id="" class="media-heading text-uppercase reviews">{{user.username}}</h4>
+                             
+                             <ul class="media-date text-uppercase reviews ">
+                                <li>22</li>
+                                <li>09</li>
+                                <li>2014</li>
+                             </ul>
+                             <p class="media-comment">
+                                Great job Alejo, Keep it up!
+                             </p>
+                             
+                         </div>
+                     </div>
+                 </li>
+             </div>
+             
+             <form method="POST" action="{% url 'auctions:add_comment' %}">
+                <div class="form-group">
+                    {% csrf_token %}
+                    <label for="textAreaComment">New comment</label>
+                    <input hidden  type="text" id="uname" name="username" value="{{user.username}}" > 
+                    <!-- <textarea class="form-control" id="comment" rows="2" placeholder="Type a comment">USER</textarea> -->
+                    <textarea class="form-control" rows="2" placeholder="Type a comment" id="comment", name="comment" value="USER"> </textarea>
+                    <!-- {{commentForm}} -->
+                    <div style="text-align: right;">
+                    <button  id="addComment" type="submit" class="btn btn-secondary" >Comment</button>
+                     </div>
+                  </div> 
+             </form>
+             
+                                         
+            </div>
+             <!-- Modal footer -->
+             <div class="modal-footer">
+                <button id="closeModalBtn" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+    var data = {{json|safe}}
+    var users = {{json_users|safe}}
+    function showAlert(title){
+                console.log("hi");
+                console.log(title)
+                var match_item = data.filter(item => item["fields"].title==title)
+                
+        
+                var modal = document.getElementById("myModal");
+                closeModalBtn = document.getElementById("closeModalBtn");
+                closeModalBtn.onclick = closeModal;
+                modal.style.display = "block";
+
+                box_tag = document.getElementById("img_item_modal");
+                username_tag = document.getElementById("username_label");
+                modal_title = document.getElementById("modal_title");
+                modal_bid = document.getElementById("modal_bid");
+
+                item_user = Object.fromEntries(Object.entries(users).filter(([k,v]) => v===match_item[0]['fields'].user));
+                username_tag.innerHTML = Object.keys(item_user)[0];
+                modal_title.innerHTML = match_item[0]['fields'].title;
+                modal_bid.innerHTML = match_item[0]['fields'].starting_bid;
+
+                img_item_modal.setAttribute("src", match_item[0]['fields'].img_url);
+
+               
+                // closeModalBtn = document.getElementById("closeModalBtn");
+                // closeModalBtn.onclick = closeModal;
+            };
+    // function addComment() {
+    //     //Add a new comment logic
+    //     var txtAreaComment = document.getElementById("commentText");
+    //     console.log(txtAreaComment.value);
+    //     }
+        function closeModal(event){
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            };
+        window.onload = function(){
+            // function showAlert(title){
+            //     console.log("hi");
+            //     console.log(title)
+            //     // modal.style.display = "block";
+            //     // closeModalBtn = document.getElementById("closeModalBtn");
+            //     // closeModalBtn.onclick = closeModal;
+            // };
+            // var place_bid_btn = document.getElementsByClassName("btn btn-primary");
+            // for (var i=0; i<place_bid_btn.length; i++){
+            //     place_bid_btn[i].onclick = showAlert;
+            // };
+            //place_bid_btn.onclick = showAlert;
+            // var modal = document.getElementById("myModal");
+            // var closeModalBtn;
+        
+            // function showAlert(event){
+            //     console.log("hi");
+            //     modal.style.display = "block";
+            //     // closeModalBtn = document.getElementById("closeModalBtn");
+            //     // closeModalBtn.onclick = closeModal;
+        
+            // };
+        
+            function closeModal(event){
+              modal.style.display = "none";
+            };
+        
+        };
+        </script>
+
+
+{% endblock %}

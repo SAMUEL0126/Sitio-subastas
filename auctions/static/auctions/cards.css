@@ -1,0 +1,57 @@
+.reviews {
+    color: #555;    
+    font-weight: bold;
+    margin: 10px auto 20px;
+}
+.notes {
+    color: #999;
+    font-size: 12px;
+}
+.media .media-object { max-width: 120px; }
+.media-body { 
+    position: relative; 
+    border-radius: 20px;
+    margin-left: 10px;
+}
+.media-date { 
+    
+    position: absolute; 
+    right: 20px;
+    top: 10px;
+}
+.media-date li{
+    display: inline;
+}
+.media-date li { padding: 0; }
+.media-date li:first-child:before { content: ''; }
+.media-date li:before { 
+    content: '.'; 
+    margin-left: -2px; 
+    margin-right: 2px;
+}
+.media-comment { margin-bottom: 20px; }
+.media-replied { margin: 0 0 20px 50px; }
+.media-replied .media-heading { padding-left: 6px; }
+
+.btn-circle {
+    font-weight: bold;
+    font-size: 12px;
+    padding: 6px 15px;
+    border-radius: 20px;
+}
+
+
+ .box{
+     width: 100%;
+     box-sizing: border-box;
+     text-align: center;
+
+  }
+
+  .modal-dialog{
+      width: 700px;
+  }
+
+div.header > div{
+    text-align: center;
+}
